@@ -1,0 +1,17 @@
+[Unit]
+Description=Hyprland Session Manager
+Documentation=https://github.com/ngodn/hyprsechy
+After=wayland-session@hyprland.desktop.target
+Wants=wayland-session@hyprland.desktop.target
+PartOf=wayland-session@hyprland.desktop.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/hyprsechy daemon
+Restart=on-failure
+RestartSec=5
+Environment=XDG_RUNTIME_DIR=%t
+Environment=WAYLAND_DISPLAY=wayland-1
+
+[Install]
+WantedBy=wayland-session@hyprland.desktop.target

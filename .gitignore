@@ -1,0 +1,39 @@
+# Rust
+/target/
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Runtime files
+*.pid
+*.socket
+
+# Build artifacts
+hyprsechy
+hyprsechy-restore
+
+# Test artifacts
+/test_results/
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Configuration backups created by install script
+*.backup.*
+
+# Claude Code files
+.claude/
+CLAUDE.md

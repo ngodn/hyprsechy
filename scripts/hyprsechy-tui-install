@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# Hyprsechy TUI Registration Script
+# Based on omarchy-tui-install pattern
+
+set -e
+
+ICON_DIR="$HOME/.local/share/applications/icons"
+DESKTOP_DIR="$HOME/.local/share/applications"
+
+# Default values for hyprsechy TUIs
+RESTORE_NAME="Hyprsechy Session Restore"
+RESTORE_EXEC="hyprsechy-restore"
+RESTORE_ICON_URL="https://img.icons8.com/?size=100&id=119741&format=png&color=000000"
+
+CONFIG_NAME="Hyprsechy Config"
+CONFIG_EXEC="hyprsechy-config"
+CONFIG_ICON_URL="https://img.icons8.com/?size=100&id=2969&format=png&color=000000"
+
+# Function to install a TUI
+install_tui() {
+    local app_name="$1"
+    local app_exec="$2"
+    local icon_url="$3"
+    local window_style="${4:-float}"
+
+    echo "Installing TUI: $app_name"
+
+    # Check if executable exists
+    if ! command -v "$app_exec" &> /dev/null; then
+        echo "Warning: $app_exec not found in PATH"
+        return 1
+    fi
+
+    local desktop_file="$DESKTOP_DIR/$app_name.desktop"
+    local icon_path="$ICON_DIR/$app_name.png"
+
+    # Create icon directory
+    mkdir -p "$ICON_DIR"
+
+    # Download icon
+    if ! curl -sL -o "$icon_path" "$icon_url"; then
+        echo "Warning: Failed to download icon for $app_name"
+        # Use a default icon path if download fails
+        icon_path="/usr/share/icons/hicolor/48x48/apps/utilities-terminal.png"
+    fi
+
+    # Determine window class based on style
+    if [[ $window_style == "float" ]]; then
+        app_class="TUI.float"
+    else
+        app_class="TUI.tile"
+    fi
+
+    # Create desktop entry
+    cat >"$desktop_file" <<EOF
+[Desktop Entry]
+Version=1.0
+Name=$app_name
+Comment=$app_name - Hyprland Session Management
+Exec=\$TERMINAL --class $app_class -e $app_exec
+Terminal=false
+Type=Application
+Icon=$icon_path
+StartupNotify=true
+Categories=System;Monitor;
+Keywords=hyprland;session;restore;wayland;
+EOF
+
+    chmod +x "$desktop_file"
+    echo "✓ Installed $app_name"
+}
+
+# Main installation
+echo "Installing Hyprsechy TUI applications..."
+
+# Install session restore TUI
+install_tui "$RESTORE_NAME" "$RESTORE_EXEC" "$RESTORE_ICON_URL" "float"
+
+# Install config TUI (if it exists)
+if command -v hyprsechy-config &> /dev/null; then
+    install_tui "$CONFIG_NAME" "$CONFIG_EXEC" "$CONFIG_ICON_URL" "tile"
+fi
+
+echo ""
+echo "Installation complete!"
+echo "You can now find these applications in your launcher (SUPER + SPACE):"
+echo "  • $RESTORE_NAME - Interactive session restore"
+if command -v hyprsechy-config &> /dev/null; then
+    echo "  • $CONFIG_NAME - Configuration manager"
+fi
+echo ""
+echo "TUI applications are registered with omarchy-style window classes:"
+echo "  • Floating windows: TUI.float"
+echo "  • Tiled windows: TUI.tile"
