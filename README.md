@@ -2,6 +2,10 @@
 
 A comprehensive session management service for Hyprland with UWSM integration, designed for the Omarchy ecosystem.
 
+![Hyprsechy Session Restore TUI](hyprsechy-tui-post-boot.png)
+
+![Hyprsechy TUI Interface](hypsechy-tui.png)
+
 ## Overview
 
 Hyprsechy is a Rust-based daemon that automatically captures and restores Hyprland window sessions. It tracks workspace layouts, window positions, and application states, providing seamless session restoration across system restarts or Hyprland reloads.
